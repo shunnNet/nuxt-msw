@@ -1,0 +1,10 @@
+{
+  "eslint.experimental.useFlatConfig": true,
+  "editor.defaultFormatter": "EditorConfig.EditorConfig",
+  "[vue]": {
+    "editor.defaultFormatter": "Vue.volar"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
+}

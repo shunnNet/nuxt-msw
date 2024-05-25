@@ -12,7 +12,7 @@ import { addServerImports, addServerImportsDir } from './server-import'
 // Module options TypeScript interface definition
 export interface ModuleOptions {
   /**
-   * Whether to enable the module
+   * Whether to enable the module. Default to `true`
    */
   enable: boolean
   /**

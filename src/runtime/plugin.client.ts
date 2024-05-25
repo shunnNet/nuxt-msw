@@ -10,6 +10,7 @@ export default defineNuxtPlugin(async (_nuxtApp) => {
       ? mswOptions.handlers()
       : mswOptions.handlers
   ))
+  console.log(worker.listHandlers())
   await worker.start(mswOptions.workerOptions)
 
   _nuxtApp.provide('mswWorker', worker)

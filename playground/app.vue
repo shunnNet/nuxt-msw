@@ -1,24 +1,23 @@
 <template>
-  <div>
-    Nuxt module playground!
-    {{ data }}
-    Error: {{ error }}
-    <button @click="req()">
-      Request
-    </button>
-  </div>
+  <main>
+    <div>{{ data }}</div>
+    <section>
+      <button data-testid="get-data-button" @click="getData">
+        Get Data
+      </button>
+      <div>{{ alternative }}</div>
+    </section>
+  </main>
 </template>
 
 <script setup>
-const { data, error } = await useFetch('http://localhost:3000/api/user')
+const { data } = await useFetch('/api/user')
 
-const req = async () => {
-  try {
-    const res = await $fetch('http://localhost:3000/api/user')
-    console.log(res)
-  }
-  catch (e) {
-    console.error(e)
-  }
+const alternative = ref('')
+
+const getData = async () => {
+  $fetch('/api/user').then((res) => {
+    alternative.value = JSON.stringify(res)
+  })
 }
 </script>

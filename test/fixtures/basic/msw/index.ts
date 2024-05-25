@@ -1,21 +1,43 @@
 import { http, HttpResponse } from 'msw'
+import { defineNuxtMswOption } from '../../../../src/runtime/composables/useDefineOptions'
 
 const baseURL = 'http://localhost:3000'
 
 export default defineNuxtMswOption({
   baseURL,
   handlers: () => {
-    return [
+    const results = [
       // Intercept "GET https://example.com/user" requests...
       http.get((import.meta.server ? baseURL : '') + '/api/user', () => {
         // ...and respond to them using this JSON response.
         return HttpResponse.json({
-          id: 'c7b3d8e0-5e0b-4b0f-8b3a-3b9f4b3d3b3d',
+          id: 'id1',
           firstName: 'John',
           lastName: 'Maverick',
         })
       }),
     ]
+    if (import.meta.server) {
+      return results
+    }
+    const url = new URL(window.location.href)
+
+    const alternative = url.searchParams.get('alternative')
+    console.log('alternative', alternative)
+    if (alternative === 'true') {
+      results.unshift(
+        // Intercept "GET https://example.com/user" requests...
+        http.get('/api/user', () => {
+          // ...and respond to them using this JSON response.
+          return HttpResponse.json({
+            id: 'id2',
+            firstName: 'Jane',
+            lastName: 'Doe',
+          })
+        }),
+      )
+    }
+    return results
   },
   workerOptions: {
     quiet: true,

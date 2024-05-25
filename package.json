@@ -1,6 +1,6 @@
 {
   "name": "@crazydos/nuxt-msw",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Nuxt module integration for MSW (Mock Service Worker)",
   "repository": {
     "type": "github",
@@ -10,13 +10,13 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/types.d.ts",
-      "import": "./dist/module.mjs",
-      "require": "./dist/module.cjs"
+      "types": "./bundle/types.d.ts",
+      "import": "./bundle/module.mjs",
+      "require": "./bundle/module.cjs"
     }
   },
-  "main": "./dist/module.cjs",
-  "types": "./dist/types.d.ts",
+  "main": "./bundle/module.cjs",
+  "types": "./bundle/types.d.ts",
   "files": [
     "bundle"
   ],

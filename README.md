@@ -4,10 +4,7 @@
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href] -->
 
-`nuxt-msw` integrates [MSW (Mock Service Worker)](https://mswjs.io/) into a Nuxt project, allowing you to use it for API mocking during development. Most of the code can be directly shared with test mocks, making it a great tool for mocking. 
-
-> [!WARNING] 
-> (Please kindly check the [usage for unit-test](#about-usage-for-unit-test-sadly) and [usage for e2e-test](#about-usage-for-e2e-test-very-sadly) section before trying to use this module.) 
+`nuxt-msw` integrates [MSW (Mock Service Worker)](https://mswjs.io/) into a Nuxt project, allowing you to use it for API mocking during development. Most of the code can be directly shared with test mocks. 
 
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
@@ -17,10 +14,9 @@
 ## Features
 
 <!-- Highlight some of the features your module provide here -->
-- 🌲 Use MSW powerful mocking features in Nuxt development
-
+- 🌲 Write once, use everywhere
+- 🚀 Use MSW powerful mocking features in Nuxt development
 - ⛰ Intercept both server-side and client-side request, including `$fetch`, `useFetch` and any other api requests.
-
 - 🚠 Auto adding service worker file `mockServiceWorker.js` when module enabled. 
 
 
@@ -130,11 +126,74 @@ export default defineNuxtConfig({
 ```
 
 ## About usage for e2e-test
-If you want to perform e2e tests on Nuxt, you might use `@nuxt/test-utils`, `Playwright`, or `Cypress`. Unfortunately, although nuxt-msw can run smoothly, you won't be able to replace the mock handler because the e2e runner and the running Nuxt instance use different memory spaces. 
+For e2e test, you can do [dynamic mock](https://mswjs.io/docs/best-practices/dynamic-mock-scenarios) at client-side. The server-side dynamic mock is not available currently.
 
-Therefore, if you want to replace mock handler when e2e test for different test case, you need to find an alternative solution for integrating MSW with your e2e framework (such as [playwright-msw](https://github.com/valendres/playwright-msw)). 
+Here is a example with `@nuxt/test-utils`:
 
-Using the mocking features provided by `@nuxt/test-utils` is also a good option.
+```ts
+// ~/msw/index.ts
+import { http, HttpResponse } from 'msw'
+
+const baseURL = 'http://localhost:3000'
+
+export default defineNuxtMswOption({
+  baseURL,
+  handlers: () => {
+    // 1. Handlers for server-side and client-side
+    const results = [
+      http.get((import.meta.server ? baseURL : '') + '/api/user', () => {
+        return HttpResponse.json({
+          id: 'id1',
+          firstName: 'John',
+          lastName: 'Maverick',
+        })
+      }),
+    ]
+    if (import.meta.server) {
+      return results
+    }
+    // 2. Dynamic mock by searchParams
+    const url = new URL(window.location.href)
+    const alternative = url.searchParams.get('alternative')
+    if (alternative === 'true') {
+      // NOTE: the order is matter, use `.unshift()`
+      results.unshift(
+        // Mock same api endpoint
+        http.get('/api/user', () => {
+          return HttpResponse.json({
+            id: 'id2',
+            firstName: 'Jane',
+            lastName: 'Doe',
+          })
+        }),
+      )
+    }
+    return results
+  },
+})
+```
+
+Then access the page with different url:
+
+```ts
+// Normal test case
+test('normal mock', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+  await expect(page.getByText('John')).toBeVisible()
+})
+
+// Alternative test case
+test('test dynamic mock', async ({ page, goto }) => {
+  // The server response still the same
+  await goto('/?alternative=true', { waitUntil: 'hydration' })
+
+  // Next, we click a button that make a request from client side
+  await page.getByTestId('get-data-button').click()
+
+  // We get a different response from same api endpoints
+  await expect(page.getByText('Jane')).toBeVisible()
+})
+```
 
 ## Contribution
 

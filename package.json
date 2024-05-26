@@ -1,6 +1,6 @@
 {
   "name": "@crazydos/nuxt-msw",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Nuxt module integration for MSW (Mock Service Worker)",
   "repository": {
     "type": "github",

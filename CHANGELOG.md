@@ -1,4 +1,16 @@
 
+## v0.1.9
+
+[compare changes](https://github.com/shunnNet/nuxt-msw/compare/v0.1.8...v0.1.9)
+
+### 🏡 Chore
+
+- Add build script for preventing public folder be modified by prepack ([fd9b9d6](https://github.com/shunnNet/nuxt-msw/commit/fd9b9d6))
+
+### ❤️ Contributors
+
+- Net <wendell20904102@gmail.com>
+
 ## v0.1.8
 
 [compare changes](https://github.com/shunnNet/nuxt-msw/compare/0.1.7...v0.1.8)

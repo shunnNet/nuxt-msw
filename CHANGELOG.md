@@ -1,4 +1,17 @@
 
+## v0.2.0
+
+[compare changes](https://github.com/shunnNet/nuxt-msw/compare/v0.1.9...v0.2.0)
+
+### 🚀 Changes & Enhancements
+
+- `defineNuxtMswOption` accept function ([b61752f](https://github.com/shunnNet/nuxt-msw/commit/b61752f))
+  - Option `handlers` not accept function as value any more.
+
+### ❤️ Contributors
+
+- Net <wendell20904102@gmail.com>
+
 ## v0.1.9
 
 [compare changes](https://github.com/shunnNet/nuxt-msw/compare/v0.1.8...v0.1.9)

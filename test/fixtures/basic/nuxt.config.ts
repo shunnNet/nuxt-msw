@@ -4,9 +4,9 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       msw: {
-        baseURL: 'http://localhost:3000'
-      }
-    }
+        baseURL: 'http://localhost:3000',
+      },
+    },
   },
   ssr: true,
   modules: [

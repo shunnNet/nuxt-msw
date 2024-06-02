@@ -13,9 +13,9 @@ const defineNitroPlugin = (def: NitroPlugin): NitroPlugin => def
  */
 const _mswOptions = mswOptions()
 const server = setupServer(...(
-  typeof mswOptions.handlers === 'function'
-    ? mswOptions.handlers()
-    : mswOptions.handlers
+  typeof _mswOptions.handlers === 'function'
+    ? _mswOptions.handlers()
+    : _mswOptions.handlers
 ))
 server.listen(mswOptions.serverOptions)
 

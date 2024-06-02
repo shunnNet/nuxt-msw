@@ -42,34 +42,32 @@ export default defineNuxtConfig({
 // ~/msw/index.ts
 import { http, HttpResponse } from 'msw'
 
-// Assuming your nuxt serve at localhost:3000 
-const baseURL = 'http://localhost:3000'
+// These configs will be applied to BOTH server and worker. 
+export default defineNuxtMswOption(() => {
+  const baseURL = useRuntimeConfig().public.msw?.baseURL
 
-export default defineNuxtMswOption({
-  baseURL,
-  
-  // Handlers will be applied to BOTH server and worker.
-  // You can use 'array of handlers', or 'function return array of handlers' for conditional case (e.g: different handler between server and worker)
-  handlers: () => {
-    return [
-      // Intercept "GET http://localhost:3000/api/user" requests...
-      http.get(
-        (import.meta.server ? baseURL : '') + '/api/user', () => {
-        // ...and respond to them using this JSON response.
-        return HttpResponse.json({
-          id: 'testid',
-          firstName: 'John',
-          lastName: 'Maverick',
-        })
-      }),
-    ]
-  },
-  workerOptions: {
-    // ... pass options to worker.start()
-  },
-  serverOptions: {
-    // ... pass options to server.listen()
-  },
+  // You can define different handlers between server and client
+  const handlers = [
+    // Intercept "GET ${baseURL}/api/user" requests...
+    http.get((import.meta.server ? baseURL : '') + '/api/user', () => {
+      // ...and respond to them using this JSON response.
+      return HttpResponse.json({
+        id: 'Mock01',
+        firstName: 'Mock',
+        lastName: 'User',
+      })
+    }),
+  ]
+  return {
+    baseURL, // Required when using `$fetch` or `useFetch` with no `baseURL` and relative path 
+    handlers,
+    workerOptions: {
+      // ... pass options to worker.start()
+    },
+    serverOptions: {
+      // ... pass options to server.listen()
+    }, 
+  }
 })
 ```
 
@@ -87,6 +85,17 @@ const { data, error } = await useFetch('/api/user')
  */
 </script>
 ```
+
+## Note: baseURL
+The `baseURL` is required when using `$fetch` or `useFetch` with no `baseURL` and relative path.
+
+For example:
+
+```ts
+await useFetch("/api/user")
+```
+
+If your server listening on `http://localhost:3000`, you need set baseURL as `http://localhost:3000`.
 
 ## Module options
 The option usage could be found at following.
@@ -112,7 +121,7 @@ export default defineNuxtConfig({
 ```
 
 ## About usage for unit-test
-When performing unit tests in Nuxt, you might use `@nuxt/test-utils`, `vitest` or `jest`. If you still wish to use MSW for mocking, you need to disable `nuxt-msw` to avoid compatibility issues. 
+When performing unit tests with Nuxt, you might use `@nuxt/test-utils`, `vitest` or `jest`. If you still wish to use MSW for mocking, you need to disable `nuxt-msw` to avoid compatibility issues. 
 
 **This means you need to manually manage the MSW server when setting up unit tests.** Of course, you can still use the handlers from `nuxt-msw` by importing them.
 
@@ -125,51 +134,53 @@ export default defineNuxtConfig({
 })
 ```
 
+Vitest has an [example](https://vitest.dev/guide/mocking#configuration) how to use msw in unit test. 
+
 ## About usage for e2e-test
 For e2e test, you can do [dynamic mock](https://mswjs.io/docs/best-practices/dynamic-mock-scenarios) at client-side. The server-side dynamic mock is not available currently.
 
 Here is a example with `@nuxt/test-utils`:
-
 ```ts
 // ~/msw/index.ts
 import { http, HttpResponse } from 'msw'
 
-const baseURL = 'http://localhost:3000'
-
-export default defineNuxtMswOption({
-  baseURL,
-  handlers: () => {
-    // 1. Handlers for server-side and client-side
-    const results = [
-      http.get((import.meta.server ? baseURL : '') + '/api/user', () => {
-        return HttpResponse.json({
-          id: 'id1',
-          firstName: 'John',
-          lastName: 'Maverick',
-        })
-      }),
-    ]
-    if (import.meta.server) {
-      return results
-    }
-    // 2. Dynamic mock by searchParams
+export default defineNuxtMswOption(() => {
+  const baseURL = useRuntimeConfig().public.msw?.baseURL
+  // 1. Handlers for server-side and client-side
+  const handlers = [
+    http.get((import.meta.server ? baseURL : '') + '/api/user', () => {
+      return HttpResponse.json({
+        id: 'Mock01',
+        firstName: 'Mock',
+        lastName: 'User',
+      })
+    }),
+  ]
+ 
+  // 2. Dynamic mock by searchParams
+  // Change mock response when fetch from client side
+  if (import.meta.client) {
     const url = new URL(window.location.href)
+
     const alternative = url.searchParams.get('alternative')
     if (alternative === 'true') {
-      // NOTE: the order is matter, use `.unshift()`
-      results.unshift(
+      handlers.unshift(
         // Mock same api endpoint
         http.get('/api/user', () => {
           return HttpResponse.json({
-            id: 'id2',
-            firstName: 'Jane',
-            lastName: 'Doe',
+            id: 'Mock02',
+            firstName: 'Mock',
+            lastName: 'USer 22',
           })
         }),
       )
     }
-    return results
-  },
+
+  }
+  return {
+    baseURL,
+    handlers,
+  }
 })
 ```
 

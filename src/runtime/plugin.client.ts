@@ -5,13 +5,13 @@ import { mswOptions } from '#imports'
 
 export default defineNuxtPlugin(async (_nuxtApp) => {
   console.log('Start msw workers...')
+  const _mswOptions = mswOptions()
   const worker = setupWorker(...(
-    typeof mswOptions.handlers === 'function'
-      ? mswOptions.handlers()
-      : mswOptions.handlers
+    typeof _mswOptions.handlers === 'function'
+      ? _mswOptions.handlers()
+      : _mswOptions.handlers
   ))
-  console.log(worker.listHandlers())
-  await worker.start(mswOptions.workerOptions)
+  await worker.start(_mswOptions.workerOptions)
 
   _nuxtApp.provide('mswWorker', worker)
 })

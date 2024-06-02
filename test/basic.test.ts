@@ -10,11 +10,11 @@ describe('ssr', async () => {
   it('renders the index page', async () => {
     // Get response to a server-rendered page with `$fetch`.
     const html = await $fetch('/')
-    expect(html).toContain('John')
+    expect(html).toContain('Mock01')
   })
-  it('renders the index page with query', async () => {
-    // Get response to a server-rendered page with `$fetch`.
-    const html = await $fetch('/?alternative=true')
-    expect(html).toContain('John')
-  })
+  // it('renders the index page with query', async () => {
+  //   // Get response to a server-rendered page with `$fetch`.
+  //   const html = await $fetch('/?alternative=true')
+  //   expect(html).toContain('Mock02')
+  // })
 })

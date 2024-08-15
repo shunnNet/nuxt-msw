@@ -1,3 +1,5 @@
 import { useLogger } from '@nuxt/kit'
 
-export const logger = useLogger('nuxt-msw')
+export type { LogLevels } from 'consola'
+
+export default useLogger('nuxt-msw')

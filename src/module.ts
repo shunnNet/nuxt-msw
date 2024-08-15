@@ -12,7 +12,7 @@ import {
   findPath,
 } from '@nuxt/kit'
 import { addServerImports, addServerImportsDir } from './server-import'
-import { logger } from './logger'
+import logger from './logger'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {

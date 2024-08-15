@@ -124,6 +124,9 @@ const customDefu = createDefu((obj, key, value) => {
         as: '_mswServerOptions',
         from: newComposablePathServer,
       }])
+      addPlugin(resolver.resolve('./runtime/plugin.server'))
+      addServerPlugin(resolver.resolve('./runtime/nitro-plugin'))
+      addImportsDir(resolver.resolve('./runtime/server'))
     }
     else {
       logger.info('No server file found.')
@@ -147,6 +150,12 @@ const customDefu = createDefu((obj, key, value) => {
         as: '_mswWorkerOptions',
         from: newComposablePathWorker,
       }])
+      addPlugin({
+        src: resolver.resolve('./runtime/plugin.client'),
+        mode: 'client',
+        order: -50,
+      })
+      addImportsDir(resolver.resolve('./runtime/browser'))
     }
     else {
       logger.info('No worker file found.')
@@ -155,14 +164,6 @@ const customDefu = createDefu((obj, key, value) => {
     const composablesImportPath = resolver.resolve('./runtime/composables')
     addImportsDir(composablesImportPath)
     addServerImportsDir(composablesImportPath)
-
-    addPlugin(resolver.resolve('./runtime/plugin.server'))
-    addPlugin({
-      src: resolver.resolve('./runtime/plugin.client'),
-      mode: 'client',
-      order: -50,
-    })
-    addServerPlugin(resolver.resolve('./runtime/nitro-plugin'))
 
     _nuxt.hook('nitro:config', async (nitroConfig) => {
       nitroConfig.publicAssets ||= []

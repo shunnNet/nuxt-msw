@@ -1,7 +1,9 @@
 // src/mocks/handlers.js
 import { defineNuxtPlugin, useRequestEvent } from '#app'
+// import { useNuxtMswHooks, onNuxtMswServerStarted, onNuxtMswWorkerStarted } from '#imports'
 
-export default defineNuxtPlugin((_nuxtApp) => {
+export default defineNuxtPlugin(async (_nuxtApp) => {
+  // useNuxtMswHooks(onNuxtMswServerStarted, onNuxtMswWorkerStarted)
   if (!import.meta.server) {
     return
   }

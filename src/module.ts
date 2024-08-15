@@ -30,6 +30,13 @@ export interface ModuleOptions {
    * default: true
    */
   includeLayer?: boolean
+
+  /**
+   * Use auto generated service worker file. You can turn to false when you need enable worker conditionally or merge with other worker.
+   * If you turn to false, you need to generate the worker file by yourself.
+   * default: true
+   */
+  // autoServiceWorker?: boolean
 }
 const DEFAULT_OPTION_PATH = '~/msw'
 
@@ -42,6 +49,7 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     enable: true,
     includeLayer: true,
+    // autoServiceWorker: true,
   },
   async setup(_options, _nuxt) {
     if (_options.enable === false) {
@@ -165,12 +173,16 @@ const customDefu = createDefu((obj, key, value) => {
     addImportsDir(composablesImportPath)
     addServerImportsDir(composablesImportPath)
 
-    _nuxt.hook('nitro:config', async (nitroConfig) => {
-      nitroConfig.publicAssets ||= []
-      nitroConfig.publicAssets.push({
-        dir: resolver.resolve('./runtime/public'),
-        maxAge: 60 * 60 * 24 * 365, // 1 year
-      })
-    })
+    // Note: There may have compatiblity issue if provide specific version sw file to user, so let user to generate it by themselves.
+    // TODO: Or find a way to auto generate it based on user's msw version.
+    // if (_options.autoServiceWorker) {
+    //   _nuxt.hook('nitro:config', async (nitroConfig) => {
+    //     nitroConfig.publicAssets ||= []
+    //     nitroConfig.publicAssets.push({
+    //       dir: resolver.resolve('./runtime/public'),
+    //       maxAge: 60 * 60 * 24 * 365, // 1 year
+    //     })
+    //   })
+    // }
   },
 })

@@ -21,10 +21,10 @@ export interface ModuleOptions {
    */
   enable: boolean
   /**
-   * Path to the nuxt-msw runtime options file.
-   * default: `~/msw/index`
+   * Path to the nuxt-msw runtime folder that include options file.
+   * default: `~/msw`
    */
-  optionPath?: string
+  folderPath?: string
   /**
    * Should include layers msw settings or not
    * default: true
@@ -60,20 +60,20 @@ export default defineNuxtModule<ModuleOptions>({
     let _layerFilePaths: string[] = []
     if (_options.includeLayer) {
       _layerFilePaths = _nuxt.options._layers
-        .filter(layer => layer.config.msw?.optionPath)
+        .filter(layer => layer.config.msw?.folderPath)
         .map(layer =>
           layer.cwd === _nuxt.options.rootDir
-            ? resolveAlias(layer.config.msw!.optionPath!)
-            : resolve(layer.cwd, layer.config.msw!.optionPath!),
+            ? resolveAlias(layer.config.msw!.folderPath!)
+            : resolve(layer.cwd, layer.config.msw!.folderPath!),
         )
         .reverse()
     }
     else {
       _layerFilePaths = _nuxt.options._layers
         .filter(layer =>
-          layer.cwd === _nuxt.options.rootDir && layer.config.msw?.optionPath,
+          layer.cwd === _nuxt.options.rootDir && layer.config.msw?.folderPath,
         )
-        .map(layer => resolveAlias(layer.config.msw!.optionPath!))
+        .map(layer => resolveAlias(layer.config.msw!.folderPath!))
     }
     if (!_layerFilePaths.length) {
       _layerFilePaths.push(resolveAlias(DEFAULT_OPTION_PATH))

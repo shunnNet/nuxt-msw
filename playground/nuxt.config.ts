@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     './layers/test-layer',
   ],
   msw: {
-    optionPath: '~/msw',
+    folderPath: '~/msw',
     includeLayer: true,
   },
 })

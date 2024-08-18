@@ -10,6 +10,6 @@ export default defineNuxtConfig({
   // devtools: { enabled: true },
   msw: {
     enable: true,
-    optionPath: './msw',
+    folderPath: './msw',
   },
 })

@@ -37,6 +37,16 @@ export interface ModuleOptions {
    * default: true
    */
   // autoServiceWorker?: boolean
+
+  /**
+   *
+   * Enable unit test mode. default: false
+   *
+   * In unit test mode, the module run <folderPath>/unit.{ts,js,mjs,cjs} file which run in nodejs environment.
+   *
+   * Which means msw server will be used in this mode.
+   */
+  testUtils?: boolean
 }
 const DEFAULT_OPTION_PATH = '~/msw'
 
@@ -49,6 +59,7 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     enable: true,
     includeLayer: true,
+    testUtils: false,
     // autoServiceWorker: true,
   },
   async setup(_options, _nuxt) {
@@ -85,7 +96,14 @@ export default defineNuxtModule<ModuleOptions>({
       await Promise.all(_layerFilePaths.map(async p => findPath(join(p, 'worker'), undefined, 'file')))
     ).filter(Boolean)
 
-    if (!(layerFilePathsServer.length || layerFilePathsWorker.length)) {
+    const layerFilePathsNode = (
+      await Promise.all(_layerFilePaths.map(async p => findPath(join(p, 'unit'), undefined, 'file')))
+    ).filter(Boolean)
+
+    if (
+      !(layerFilePathsServer.length || layerFilePathsWorker.length)
+      || (_options.testUtils && !layerFilePathsNode.length)
+    ) {
       logger.warn(`msw disabled because no config file found. Tried to get configs from folders: ${_layerFilePaths}`)
       return
     }
@@ -114,59 +132,93 @@ const customDefu = createDefu((obj, key, value) => {
     //  _nuxt.options.build.transpile.push(newComposablePathServer)
     // https://github.com/nuxt/nuxt/issues/21497#issuecomment-1911845046
     // TODO: But why ?
-    if (layerFilePathsServer.length) {
-      const newComposablePathServer = resolver.resolve('./runtime/dynamic/useNuxtMswServerOptions.mjs')
-      mkdirSync(dirname(newComposablePathServer), { recursive: true })
-      writeFileSync(
-        newComposablePathServer,
-        `${layerFilePathsServer.map((p, i) => `import mswOptions${i} from "${p}"`).join('\n')}
-    ${customDefu}
-        export default () => {
-          return [
-          ${layerFilePathsServer.map((_, i) => `mswOptions${i}()`).join(',')}
-          ].reduce((acc, cur) => customDefu(cur, acc))
-        }`)
-      _nuxt.options.build.transpile.push(newComposablePathServer)
-      addServerImports([{
-        name: 'default',
-        as: '_mswServerOptions',
-        from: newComposablePathServer,
-      }])
-      addPlugin(resolver.resolve('./runtime/plugin.server'))
-      addServerPlugin(resolver.resolve('./runtime/nitro-plugin'))
-      addImportsDir(resolver.resolve('./runtime/server'))
-    }
-    else {
-      logger.info('No server file found.')
-    }
 
-    if (layerFilePathsWorker.length) {
-      const newComposablePathWorker = resolver.resolve('./runtime/dynamic/useNuxtMswWorkerOptions.mjs')
-      mkdirSync(dirname(newComposablePathWorker), { recursive: true })
-      writeFileSync(
-        newComposablePathWorker,
-        `${layerFilePathsWorker.map((p, i) => `import mswOptions${i} from "${p}"`).join('\n')}
-  ${customDefu}
-  export default () => {
-    return [
-    ${layerFilePathsWorker.map((_, i) => `mswOptions${i}()`).join(',')}
-    ].reduce((acc, cur) => customDefu(cur, acc))
-  }`)
-      _nuxt.options.build.transpile.push(newComposablePathWorker)
-      addImports([{
-        name: 'default',
-        as: '_mswWorkerOptions',
-        from: newComposablePathWorker,
-      }])
-      addPlugin({
-        src: resolver.resolve('./runtime/plugin.client'),
-        mode: 'client',
-        order: -50,
-      })
-      addImportsDir(resolver.resolve('./runtime/browser'))
+    // support @nuxt/test-utils
+    if (_options.testUtils) {
+      if (layerFilePathsNode.length) {
+        const newComposablePathNode = resolver.resolve('./runtime/dynamic/useNuxtMswServerNodeOptions.mjs')
+        mkdirSync(dirname(newComposablePathNode), { recursive: true })
+        writeFileSync(
+          newComposablePathNode,
+          `${layerFilePathsNode.map((p, i) => `import mswOptions${i} from "${p}"`).join('\n')}
+    ${customDefu}
+    export default () => {
+      return [
+      ${layerFilePathsNode.map((_, i) => `mswOptions${i}()`).join(',')}
+      ].reduce((acc, cur) => customDefu(cur, acc))
+    }`)
+        _nuxt.options.build.transpile.push(newComposablePathNode)
+        addImports([{
+          name: 'default',
+          as: '_mswNodeOptions',
+          from: newComposablePathNode,
+        }])
+        addPlugin({
+          src: resolver.resolve('./runtime/plugin.node'),
+          mode: 'client',
+          order: -50,
+        })
+        addImportsDir(resolver.resolve('./runtime/server'))
+      }
+      else {
+        logger.info('No node file found.')
+      }
     }
     else {
-      logger.info('No worker file found.')
+      if (layerFilePathsServer.length) {
+        const newComposablePathServer = resolver.resolve('./runtime/dynamic/useNuxtMswServerOptions.mjs')
+        mkdirSync(dirname(newComposablePathServer), { recursive: true })
+        writeFileSync(
+          newComposablePathServer,
+          `${layerFilePathsServer.map((p, i) => `import mswOptions${i} from "${p}"`).join('\n')}
+      ${customDefu}
+          export default () => {
+            return [
+            ${layerFilePathsServer.map((_, i) => `mswOptions${i}()`).join(',')}
+            ].reduce((acc, cur) => customDefu(cur, acc))
+          }`)
+        _nuxt.options.build.transpile.push(newComposablePathServer)
+        addServerImports([{
+          name: 'default',
+          as: '_mswServerOptions',
+          from: newComposablePathServer,
+        }])
+        addPlugin(resolver.resolve('./runtime/plugin.server'))
+        addServerPlugin(resolver.resolve('./runtime/nitro-plugin'))
+        addImportsDir(resolver.resolve('./runtime/server'))
+      }
+      else {
+        logger.info('No server file found.')
+      }
+
+      if (layerFilePathsWorker.length) {
+        const newComposablePathWorker = resolver.resolve('./runtime/dynamic/useNuxtMswWorkerOptions.mjs')
+        mkdirSync(dirname(newComposablePathWorker), { recursive: true })
+        writeFileSync(
+          newComposablePathWorker,
+          `${layerFilePathsWorker.map((p, i) => `import mswOptions${i} from "${p}"`).join('\n')}
+    ${customDefu}
+    export default () => {
+      return [
+      ${layerFilePathsWorker.map((_, i) => `mswOptions${i}()`).join(',')}
+      ].reduce((acc, cur) => customDefu(cur, acc))
+    }`)
+        _nuxt.options.build.transpile.push(newComposablePathWorker)
+        addImports([{
+          name: 'default',
+          as: '_mswWorkerOptions',
+          from: newComposablePathWorker,
+        }])
+        addPlugin({
+          src: resolver.resolve('./runtime/plugin.client'),
+          mode: 'client',
+          order: -50,
+        })
+        addImportsDir(resolver.resolve('./runtime/browser'))
+      }
+      else {
+        logger.info('No worker file found.')
+      }
     }
 
     const composablesImportPath = resolver.resolve('./runtime/composables')

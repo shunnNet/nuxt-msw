@@ -6,9 +6,9 @@ const handlers = [
   http.get(baseURL + '/api/user', () => {
     // ...and respond to them using this JSON response.
     return HttpResponse.json({
-      id: 'Mock03 layer',
-      firstName: 'Mock layer',
-      lastName: 'User layer',
+      id: 'Mock03',
+      firstName: 'Mock2',
+      lastName: 'User',
     })
   }),
 ]
@@ -20,7 +20,7 @@ export default defineNuxtMswServerOption({
   },
 
   onRequest() {
-    console.log('Hello from onRequest layer')
+    console.log('Hello from onRequest')
   },
   // afterResponse(mswServer, event) {
   //   console.log('Hello from afterResponse')

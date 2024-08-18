@@ -9,5 +9,10 @@
   },
   "dependencies": {
     "nuxt": "^3.11.2"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

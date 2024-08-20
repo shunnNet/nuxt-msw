@@ -1,4 +1,3 @@
-// import { writeFile, readFile } from 'node:fs/promises'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve, join } from 'node:path'
 import {
@@ -102,7 +101,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     if (
       !(layerFilePathsServer.length || layerFilePathsWorker.length)
-      || (_options.testUtils && !layerFilePathsNode.length)
+      && !_options.testUtils
     ) {
       logger.warn(`msw disabled because no config file found. Tried to get configs from folders: ${_layerFilePaths}`)
       return
@@ -135,34 +134,23 @@ const customDefu = createDefu((obj, key, value) => {
 
     // support @nuxt/test-utils
     if (_options.testUtils) {
-      if (layerFilePathsNode.length) {
-        const newComposablePathNode = resolver.resolve('./runtime/dynamic/useNuxtMswServerNodeOptions.mjs')
-        mkdirSync(dirname(newComposablePathNode), { recursive: true })
-        writeFileSync(
-          newComposablePathNode,
-          `${layerFilePathsNode.map((p, i) => `import mswOptions${i} from "${p}"`).join('\n')}
+      const composablePathTest = resolver.resolve('./runtime/dynamic/useNuxtMswServerTestOptions.mjs')
+      mkdirSync(dirname(composablePathTest), { recursive: true })
+      writeFileSync(
+        composablePathTest,
+        `${layerFilePathsNode.map((p, i) => `import mswOptions${i} from "${p}"`).join('\n')}
     ${customDefu}
     export default () => {
       return [
       ${layerFilePathsNode.map((_, i) => `mswOptions${i}()`).join(',')}
       ].reduce((acc, cur) => customDefu(cur, acc))
     }`)
-        _nuxt.options.build.transpile.push(newComposablePathNode)
-        addImports([{
-          name: 'default',
-          as: '_mswNodeOptions',
-          from: newComposablePathNode,
-        }])
-        addPlugin({
-          src: resolver.resolve('./runtime/plugin.node'),
-          mode: 'client',
-          order: -50,
-        })
-        addImportsDir(resolver.resolve('./runtime/server'))
-      }
-      else {
-        logger.info('No node file found.')
-      }
+      _nuxt.options.build.transpile.push(composablePathTest)
+      addImports([{
+        name: 'default',
+        as: '_mswTestOptions',
+        from: composablePathTest,
+      }])
     }
     else {
       if (layerFilePathsServer.length) {

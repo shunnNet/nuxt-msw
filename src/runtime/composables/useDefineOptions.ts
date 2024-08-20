@@ -102,7 +102,7 @@ export const defineNuxtMswServerOption = (
     : () => options
 }
 
-type TNuxtMswNodeOptions = Omit<TNuxtMswServerOptions, 'onRequest'>
+export type TNuxtMswTestOptions = Pick<TNuxtMswServerOptions, 'handlers' | 'serverOptions' | 'baseURL'>
 /**
  *
  * Defines the Nuxt MSW Server option when working with `@nuxt/test-utils`.
@@ -110,8 +110,8 @@ type TNuxtMswNodeOptions = Omit<TNuxtMswServerOptions, 'onRequest'>
  * @param options - The Nuxt MSW Server options or a function that returns the options.
  * @returns A function return Nuxt MSW Server options.
  */
-export const defineNuxtMswNodeOption = (
-  options: TNuxtMswNodeOptions | (() => TNuxtMswNodeOptions),
+export const defineNuxtMswTestOptions = (
+  options: TNuxtMswTestOptions | (() => TNuxtMswTestOptions),
 ) => {
   return typeof options === 'function'
     ? options

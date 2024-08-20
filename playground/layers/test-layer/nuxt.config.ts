@@ -2,7 +2,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       msw: {
-        baseURL: 'http://localhost:3001',
+        baseURL: 'http://localhost:3000',
       },
     },
   },

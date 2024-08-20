@@ -3,10 +3,7 @@
     <div>{{ data }}</div>
     <div>Error: {{ error }}</div>
     <section>
-      <button
-        data-testid="get-data-button"
-        @click="getData"
-      >
+      <button data-testid="get-data-button" @click="getData">
         Get Data
       </button>
       <div>{{ alternative }}</div>

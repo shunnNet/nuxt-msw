@@ -2,6 +2,11 @@
   "name": "@crazydos/nuxt-msw",
   "version": "0.2.0",
   "description": "Nuxt module integration for MSW (Mock Service Worker)",
+  "author": {
+    "name": "shunnNet",
+    "email": "wendell20904102@gmail.com",
+    "url": "https://github.com/shunnNet"
+  },
   "repository": {
     "type": "github",
     "url": "https://github.com/shunnNet/nuxt-msw"

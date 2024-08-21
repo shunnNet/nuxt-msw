@@ -43,10 +43,13 @@ Thank you to all the users of version 0.x. I believe you won’t need to put in 
 
 The differences between 0.x and 1.x are as follows:
 
-optionPath in nuxt.config has been changed to folderPath. Originally, it pointed to a file, but now it points to a folder.
-The settings for worker and server were previously written in the same file. To better utilize the environments they run in, worker and server will now run in separate files. Please refer to the instructions below.
-Added support for unit testing in the Nuxt environment.
-Added support for Nuxt layers.
+- `optionPath` in `nuxt.config` has been changed to `folderPath`. Originally, it pointed to a file, but now it points to a folder.
+- You need init MSW worker file manually. `nuxt-msw` no longer auto provide a worker file.
+- The settings for worker and server were previously written in the same file. To better utilize the environments they run in, worker and server will now run in separate files. Please refer to the instructions below.
+- Added support for unit testing in the Nuxt environment.
+- Added support for Nuxt layers.
+
+If you don't want upgrade to 1.x now, you can find the 0.x doc here: [0.2.x doc](https://github.com/shunnNet/nuxt-msw/tree/v0.2.0)
 
 ## Setup
 To install the module to your Nuxt application:

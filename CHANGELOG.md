@@ -1,4 +1,20 @@
 
+## v1.0.0
+
+[compare changes](https://github.com/shunnNet/nuxt-msw/compare/v0.2.0...v1.0.0)
+
+### 🚀 Enhancements
+- Support nuxt-layer and split server and worker context
+- Not provide specific version of sw file to prevent compatiblity issue. 
+- Support `nuxt/test-utils`
+
+### 🏡 Chore
+- Add msw as peerDependencies ([90477ec](https://github.com/shunnNet/nuxt-msw/commit/90477ec))
+
+### ❤️ Contributors
+- Net <wendell20904102@gmail.com>
+
+
 ## v0.2.0
 
 [compare changes](https://github.com/shunnNet/nuxt-msw/compare/v0.1.9...v0.2.0)

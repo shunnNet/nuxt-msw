@@ -15,10 +15,16 @@ const { data } = await useFetch('/api/user')
 
 const alternative = ref({})
 
+// let $worker = null
+// if (import.meta.client) {
+//   $worker = useNuxtMswWoker()
+// }
+
 const getData = async () => {
   // alternative.value.url = window.location.href
   await $fetch('/api/user').then((res) => {
     alternative.value = res
   })
+  // alternative.value = $worker
 }
 </script>

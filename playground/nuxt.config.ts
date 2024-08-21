@@ -6,9 +6,16 @@ export default defineNuxtConfig({
       },
     },
   },
-  modules: ['../src/module', '@nuxt/test-utils/module'],
+  modules: [
+    // '../src/module',
+    '@nuxt/test-utils/module',
+  ],
   devtools: { enabled: true },
+  extends: [
+    './layers/test-layer',
+  ],
   msw: {
-    enable: true,
+    folderPath: '~/msw',
+    includeLayer: true,
   },
 })

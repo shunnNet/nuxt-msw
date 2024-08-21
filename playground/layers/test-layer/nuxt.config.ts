@@ -1,5 +1,3 @@
-import MyModule from '../../../src/module'
-
 export default defineNuxtConfig({
   runtimeConfig: {
     public: {
@@ -8,14 +6,10 @@ export default defineNuxtConfig({
       },
     },
   },
-  ssr: true,
-  modules: [
-    MyModule,
-    '@nuxt/test-utils/module',
-  ],
+  modules: ['../src/module'],
+  // devtools: { enabled: true },
   msw: {
-
-    folderPath: '~/msw',
+    enable: true,
+    folderPath: './msw',
   },
-
 })

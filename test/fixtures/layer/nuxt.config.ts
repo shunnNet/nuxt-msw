@@ -11,10 +11,9 @@ export default defineNuxtConfig({
   ssr: true,
   modules: [
     MyModule,
-    '@nuxt/test-utils/module',
   ],
+  extends: ['./layers/test-layer'],
   msw: {
-
     folderPath: '~/msw',
   },
 

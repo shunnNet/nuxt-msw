@@ -6,7 +6,10 @@ import { _mswTestOptions } from '#imports'
 import type { TNuxtMswTestOptions } from '#imports'
 
 export const setupNuxtMswServer = async (options: TNuxtMswTestOptions = {}) => {
-  const _mswOptions = defu(options, _mswTestOptions())
+  const _mswOptions = defu(defu(options, _mswTestOptions()), {
+    handlers: [],
+    serverOptions: {},
+  })
   const server = setupServer(
     ...(
       typeof _mswOptions.handlers === 'function'

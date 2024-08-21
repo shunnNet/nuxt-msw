@@ -143,7 +143,7 @@ const customDefu = createDefu((obj, key, value) => {
     export default () => {
       return [
       ${layerFilePathsNode.map((_, i) => `mswOptions${i}()`).join(',')}
-      ].reduce((acc, cur) => customDefu(cur, acc))
+      ].reduce((acc, cur) => customDefu(cur, acc), [])
     }`)
       _nuxt.options.build.transpile.push(composablePathTest)
       addImports([{
@@ -163,7 +163,7 @@ const customDefu = createDefu((obj, key, value) => {
           export default () => {
             return [
             ${layerFilePathsServer.map((_, i) => `mswOptions${i}()`).join(',')}
-            ].reduce((acc, cur) => customDefu(cur, acc))
+            ].reduce((acc, cur) => customDefu(cur, acc), [])
           }`)
         _nuxt.options.build.transpile.push(newComposablePathServer)
         addServerImports([{
@@ -189,7 +189,7 @@ const customDefu = createDefu((obj, key, value) => {
     export default () => {
       return [
       ${layerFilePathsWorker.map((_, i) => `mswOptions${i}()`).join(',')}
-      ].reduce((acc, cur) => customDefu(cur, acc))
+      ].reduce((acc, cur) => customDefu(cur, acc), [])
     }`)
         _nuxt.options.build.transpile.push(newComposablePathWorker)
         addImports([{

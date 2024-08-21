@@ -5,7 +5,7 @@ import { http, HttpResponse } from 'msw'
 import { setupNuxtMswServer } from '../src/runtime/test-utils'
 import UserName from './fixtures/basic/components/UserName.vue'
 
-setupNuxtMswServer({
+await setupNuxtMswServer({
   baseURL: 'http://localhost:3001',
   handlers: [
     http.get('http://localhost:3001/api/user', () => {

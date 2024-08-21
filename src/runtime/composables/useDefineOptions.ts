@@ -6,14 +6,7 @@ import type { NuxtApp } from '#app'
 
 export type TNuxtMswWorkerOptions = {
   /**
-   *  Indicate baseURL of Nuxt server. e.g: `http://localhost:3000`
-   *  Required if you use `useFetch` or `$fetch` with relative URL in your app.
-   */
-  baseURL?: string
-  /**
-   * Define the handlers passed to `setupWorker()` and `setupServer()`.
-   *
-   * You can pass different handlers for client-side and server-side.
+   * Define the handlers passed to `setupWorker()`.
    *
    * - See [Dynamic Mocking](https://mswjs.io/docs/best-practices/dynamic-mock-scenarios)
    * - See [setupWorker](https://mswjs.io/docs/api/setup-worker)
@@ -41,13 +34,10 @@ export type TNuxtMswServerOptions = {
    *  Indicate baseURL of Nuxt server. e.g: `http://localhost:3000`
    *  Required if you use `useFetch` or `$fetch` with relative URL in your app.
    */
-  baseURL?: string
+  baseURL: string
   /**
-   * Define the handlers passed to `setupWorker()` and `setupServer()`.
+   * Define the handlers passed to `setupServer()`.
    *
-   * You can pass different handlers for client-side and server-side.
-   *
-   * - See [Dynamic Mocking](https://mswjs.io/docs/best-practices/dynamic-mock-scenarios)
    * - See [setupServer](https://mswjs.io/docs/api/setup-server)
    */
   handlers: HttpHandler[]
@@ -72,7 +62,7 @@ export type TNuxtMswServerOptions = {
    * @param event H3Event. See [H3](https://h3.unjs.io)
    * @returns
    */
-  afterResponse?: (server: SetupServerApi, event: H3Event) => void | Promise<void>
+  // afterResponse?: (server: SetupServerApi, event: H3Event) => void | Promise<void>
 }
 
 /**
@@ -102,7 +92,25 @@ export const defineNuxtMswServerOption = (
     : () => options
 }
 
-export type TNuxtMswTestOptions = Pick<TNuxtMswServerOptions, 'handlers' | 'serverOptions' | 'baseURL'>
+export type TNuxtMswTestOptions = {
+  /**
+   *  Any baseURL, for mocking $fetch and useFetch. e.g: `http://localhost:3000`
+   *  Required if you use `useFetch` or `$fetch` with relative URL in your app.
+   */
+  baseURL?: string
+
+  /**
+   * Define the handlers passed to `setupServer()`.
+   */
+  handlers?: HttpHandler[]
+
+  /**
+   * Options for the `server.listen()`.
+   *
+   * See https://mswjs.io/docs/api/setup-server/listen
+   */
+  serverOptions?: Partial<SharedOptions>
+}
 /**
  *
  * Defines the Nuxt MSW Server option when working with `@nuxt/test-utils`.

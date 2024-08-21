@@ -13,6 +13,10 @@
       "types": "./dist/types.d.ts",
       "import": "./dist/module.mjs",
       "require": "./dist/module.cjs"
+    },
+    "./test-utils": {
+      "types": "./dist/runtime/test-utils.d.ts",
+      "import": "./dist/runtime/test-utils.mjs"
     }
   },
   "main": "./dist/module.cjs",

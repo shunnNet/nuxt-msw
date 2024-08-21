@@ -1,4 +1,4 @@
-# nuxt-ms
+# nuxt-msw
 <!-- [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![License][license-src]][license-href]
@@ -11,14 +11,42 @@
 <!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/nuxt-msw?file=playground%2Fapp.vue) -->
 <!-- - [📖 &nbsp;Documentation](https://example.com) -->
 
-## Features
+- [nuxt-msw](#nuxt-msw)
+  - [Features](#features)
+  - [Migrate: `0.x` -\> `1.x` users](#migrate-0x---1x-users)
+  - [Setup](#setup)
+  - [Usage](#usage)
+    - [worker](#worker)
+    - [server](#server)
+  - [Module options](#module-options)
+  - [How to Use in Tests](#how-to-use-in-tests)
+    - [vitest](#vitest)
+    - [`@nuxt/test-utils`](#nuxttest-utils)
+      - [Unit Tests](#unit-tests)
+        - [Note: `baseURL` in unit test](#note-baseurl-in-unit-test)
+      - [E2E Tests](#e2e-tests)
+    - [Note: `$fetch` and `fetch` in `@nuxt/test-utils/e2e`](#note-fetch-and-fetch-in-nuxttest-utilse2e)
+  - [Nuxt Layer](#nuxt-layer)
+    - [nuxt layer and unit test](#nuxt-layer-and-unit-test)
+  - [Contribution](#contribution)
 
+
+## Features
 <!-- Highlight some of the features your module provide here -->
 - 🌲 Write once, use everywhere
 - 🚀 Use MSW powerful mocking features in Nuxt development
 - ⛰ Intercept both server-side and client-side request, including `$fetch`, `useFetch` and any other api requests.
 - 🥧 Support Nuxt layer.
 
+## Migrate: `0.x` -> `1.x` users
+Thank you to all the users of version 0.x. I believe you won’t need to put in too much effort to upgrade to version 1.x.
+
+The differences between 0.x and 1.x are as follows:
+
+optionPath in nuxt.config has been changed to folderPath. Originally, it pointed to a file, but now it points to a folder.
+The settings for worker and server were previously written in the same file. To better utilize the environments they run in, worker and server will now run in separate files. Please refer to the instructions below.
+Added support for unit testing in the Nuxt environment.
+Added support for Nuxt layers.
 
 ## Setup
 To install the module to your Nuxt application:
@@ -42,6 +70,11 @@ The setup location is in the `~/msw` directory (by default), and you configure i
 
 ### worker
 To set up the worker, you need follow the [MSW documentation](https://mswjs.io/docs/integrations/browser#generating-the-worker-script) to create a worker file. 
+
+```sh
+# For example
+npx msw init public --save
+```
 
 Next, you need to create a `worker.{ts|js|mjs|cjs}` file in the `~/msw` directory. The worker file will be run in the Nuxt client plugin, which in browser context. Means you can use browser api and Nuxt composable in this file.
 
@@ -72,9 +105,10 @@ export default defineNuxtMswWorkerOption(() => {
       // Module will setup worker when nuxt run client plugin
       // Means this function will be called after plugin call worker.start()
 
-      // nuxtApp.hook('app:mounted', () => {
-      //   console.log(worker.listHandlers())
-      // })
+      nuxtApp.hook('app:mounted', () => {
+        // const route = useRoute()
+        // console.log(worker.listHandlers())
+      })
     },
     
   }
@@ -100,14 +134,18 @@ The way to set up the server is similar to the worker. You need to create a `ser
 
 The server file will be run in Node.js `Nitro` context. Because it is before NuxtApp created, you can not access NuxtApp and composable which access it. But you can access msw server and request (h3Event).
 
-One more important thing is that you need to set `baseURL` in the server option if you are using `$fetch` or `useFetch` with no `baseURL` set, and use path with no domain like `/some/path`. The baseURL must be same as your server listening address.
+One more important thing is that, for your mock and nitro server handler work properly, you need to set `baseURL` in the server option. The baseURL must be same as your server listening address.
+
+And, when mocking the server side request, you need include the baseURL in your handler's path.
 ```ts
 // ~/msw/server.ts
 import { http, HttpResponse } from 'msw'
 
 export default defineNuxtMswServerOption(() => {
   // assume your server listening at http://localhost:3000
-  const baseURL = "http://localhost:3000" // or use useRuntimeConfig() to get your baseURL setting
+  const baseURL = "http://localhost:3000" 
+  
+  // composables that not related to NuxtApp can be used here, like: useRuntimeConfig
 
   const handlers = [
     // Intercept "GET http://localhost:3000/user" requests...
@@ -119,7 +157,7 @@ export default defineNuxtMswServerOption(() => {
     }),
   ]
   return {
-    baseURL, // baseURL is required when using $fetch or useFetch with no baseURL and relative path
+    baseURL, // baseURL is required 
     handlers,
     serverOptions: {
       onUnhandledRequest: 'bypass',
@@ -265,19 +303,19 @@ const { data } = await useFetch(
 
 ```ts
 // @vitest-environment nuxt
-import { it, expect } from 'vitest'
+import { it, expect, afterEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import UserName from './UserName.vue'
 
 import { setupNuxtMswServer } from '@crazydos/nuxt-msw/test-utils'
 import { http, HttpResponse } from "msw"
 
-const mswServer = setupNuxtMswServer({
+const mswServer = await setupNuxtMswServer({
   handlers: [
     http.get(
       'http://localhost:3000/api/user', 
       () => HttpResponse.json({ name: 'msw server unit' })
-    })
+    )
   ],
   serverOptions: {
     // onUnhandledRequest: 'bypass',
@@ -302,6 +340,13 @@ it('displays message', async () => {
   expect(component.find('#name').text()).toBe('msw server unit')
 })
 ```
+
+Then you can run the test with `vitest`:
+
+```bash
+npx vitest
+```
+
 ##### Note: `baseURL` in unit test
 If you are using `$fetch` or `useFetch` with no `baseURL` set, and use path with no domain like `/some/path`. You can mock like following:
 
@@ -311,7 +356,7 @@ await useFetch('/api/user')
 
 // mock with baseURL
 const baseURL = 'http://localhost:3000'
-setupNuxtMswServer({
+await setupNuxtMswServer({
   baseURL,
   handlers: [
     http.get(baseURL + '/api/user', () => {
@@ -319,8 +364,9 @@ setupNuxtMswServer({
     })
   ]
 })
-
 ```
+
+> [!NOTE] `baseURL` here is just a valid domain, it is not necessary to match nuxt server address. But if you run a real server and want msw fallback to there, you need to set baseURL to the real server address.  
 
 
 #### E2E Tests
@@ -431,18 +477,11 @@ export default defineNuxtMswTestOptions(() => {
 import { setupNuxtMswServer } from '@crazydos/nuxt-msw/test-utils'
 import { http, HttpResponse } from "msw"
 
-const mswServer = setupNuxtMswServer({
-  handlers: [
-    http.get(
-      // TODO: need baseURL ?
-      '/api/user', 
-      () => HttpResponse.json({ name: 'msw server unit' })
-    })
-  ],
-  serverOptions: {
-    // onUnhandledRequest: 'bypass',
-  },
-})
+const mswServer = await setupNuxtMswServer(
+  /** 
+   * You can still pass options to overwrite the options in unit.ts
+  */
+)
 
 ```
 

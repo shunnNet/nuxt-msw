@@ -55,7 +55,7 @@ If you don't want upgrade to 1.x now, you can find the 0.x doc here: [0.2.x doc]
 To install the module to your Nuxt application:
 
 ```bash
-npm install @crazydos/nuxt-msw msw
+npm install @crazydos/nuxt-msw msw --save-dev
 ```
 
 ```ts

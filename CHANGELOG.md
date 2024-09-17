@@ -1,4 +1,11 @@
 
+## v1.0.1
+
+## doc
+- Makes install instruction more precise.
+
+[compare changes](https://github.com/shunnNet/nuxt-msw/compare/v1.0.0...v1.0.1)
+
 ## v1.0.0
 
 [compare changes](https://github.com/shunnNet/nuxt-msw/compare/v0.2.0...v1.0.0)

@@ -3,14 +3,14 @@ import { http, HttpResponse } from 'msw'
 const baseURL = useRuntimeConfig().public.msw?.baseURL
 const handlers = [
   // Intercept "GET https://example.com/user" requests...
-  // http.get(baseURL + '/api/user', () => {
-  //   // ...and respond to them using this JSON response.
-  //   return HttpResponse.json({
-  //     id: 'Mock03',
-  //     firstName: 'Mock2',
-  //     lastName: 'User',
-  //   })
-  // }),
+  http.get(baseURL + '/api/user', () => {
+    // ...and respond to them using this JSON response.
+    return HttpResponse.json({
+      id: 'Mock03',
+      firstName: 'Mock2',
+      lastName: 'User',
+    })
+  }),
 ]
 export default defineNuxtMswServerOption({
   baseURL,

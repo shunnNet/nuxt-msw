@@ -62,6 +62,11 @@ export default defineNuxtModule<ModuleOptions>({
     // autoServiceWorker: true,
   },
   async setup(_options, _nuxt) {
+    const resolver = createResolver(import.meta.url)
+    const composablesImportPath = resolver.resolve('./runtime/composables')
+    addImportsDir(composablesImportPath)
+    addServerImportsDir(composablesImportPath)
+
     if (_options.enable === false) {
       logger.info('msw disabled because enable: false')
       return
@@ -106,8 +111,6 @@ export default defineNuxtModule<ModuleOptions>({
       logger.warn(`msw disabled because no config file found. Tried to get configs from folders: ${_layerFilePaths}`)
       return
     }
-
-    const resolver = createResolver(import.meta.url)
 
     // NOTE: The nitro context (which is running at different context to nuxt) can not use "template"
     // So, we need use composable
@@ -208,10 +211,6 @@ const customDefu = createDefu((obj, key, value) => {
         logger.info('No worker file found.')
       }
     }
-
-    const composablesImportPath = resolver.resolve('./runtime/composables')
-    addImportsDir(composablesImportPath)
-    addServerImportsDir(composablesImportPath)
 
     // Note: There may have compatiblity issue if provide specific version sw file to user, so let user to generate it by themselves.
     // TODO: Or find a way to auto generate it based on user's msw version.

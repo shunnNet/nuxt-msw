@@ -5,7 +5,7 @@ import type { ConfigOptions } from '@nuxt/test-utils/playwright'
 export default defineConfig<ConfigOptions>({
   use: {
     nuxt: {
-      // rootDir: fileURLToPath(new URL('./test/fixtures/basic', import.meta.url)),
+      rootDir: fileURLToPath(new URL('./test/fixtures/basic', import.meta.url)),
     },
     headless: false,
     channel: 'chrome',

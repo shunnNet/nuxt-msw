@@ -17,16 +17,32 @@ import logger from './logger'
 export interface ModuleOptions {
   /**
    * Whether to enable the module. Default to `true`
+   *
+   * This is useful when you need to enable or disable msw based on the environment.
+   *
+   * When `enable: false`, the msw worker and server will not try to intercept requests.
+   *
+   * But keep auto import composables for types checking.
+   *
+   * @default true
+   * @example
+   * {
+   *   enable: process.env.TEST === 'true'
+   * }
+   *
    */
   enable: boolean
   /**
-   * Path to the nuxt-msw runtime folder that include options file.
-   * default: `~/msw`
+   * Path to the `nuxt-msw` runtime folder that include options file.
+   * @default "~/msw"
    */
   folderPath?: string
   /**
-   * Should include layers msw settings or not
-   * default: true
+   * Should include layers `nuxt-msw` settings or not
+   *
+   * @see https://github.com/shunnNet/nuxt-msw?tab=readme-ov-file#nuxt-layer
+   *
+   * @default true
    */
   includeLayer?: boolean
 
@@ -41,9 +57,13 @@ export interface ModuleOptions {
    *
    * Enable unit test mode. default: false
    *
-   * In unit test mode, the module run <folderPath>/unit.{ts,js,mjs,cjs} file which run in nodejs environment.
+   * When this mode is enabled, you can use `setupNuxtMswServer` to start the msw server in a unit test environment (which is a Node.js environment).
    *
-   * Which means msw server will be used in this mode.
+   * When enable: false, this mode is inactive.
+   *
+   * @see https://github.com/shunnNet/nuxt-msw?tab=readme-ov-file#nuxttest-utils
+   *
+   * @default false
    */
   testUtils?: boolean
 }

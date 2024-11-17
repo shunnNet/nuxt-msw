@@ -54,6 +54,24 @@ export const setupNuxtMswServer = async (options: TNuxtMswTestOptions = {}) => {
   }
 
   // set patched fetch to $fetch
+  /**
+   *
+   * 1.
+   * The main difference between passing localFetch and `globalThis.fetch` is
+   *
+   * passing localFetch prevent warning if internal fetch from nuxt/test-utils is made during the test
+   *
+   * Currently, the internal fetch are made only when vitest env setup which is before setupNuxtMswServer
+   *
+   * So It is ok to pass globalThis.fetch here actually
+   *
+   * 2.
+   * after nuxt/test-utils vitest setup, globalThis.fetch is normal fetch without modification
+   *
+   * globalThis.$fetch hold a fetch which is modified fetch (with local fetch)
+   *
+   * Maybe passing localFetch here is intend to align with its behaviour
+   */
   globalThis.$fetch = createFetch({
     fetch: localFetch,
     Headers: globalThis.Headers,

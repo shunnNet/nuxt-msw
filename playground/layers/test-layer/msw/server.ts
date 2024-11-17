@@ -4,17 +4,17 @@ export default defineNuxtMswServerOption(() => {
   const baseURL = useRuntimeConfig().public.msw?.baseURL
   const handlers = [
     // Intercept "GET https://example.com/user" requests...
-    // http.get(baseURL + '/api/user', () => {
-    //   // ...and respond to them using this JSON response.
-    //   return HttpResponse.json({
-    //     id: 'Mock03 layer',
-    //     firstName: 'Mock layer',
-    //     lastName: 'User layer',
-    //   })
-    // }),
+    http.get(baseURL + '/api/user', () => {
+      // ...and respond to them using this JSON response.
+      return HttpResponse.json({
+        id: 'Mock03 layer',
+        firstName: 'Mock layer',
+        lastName: 'User layer',
+      })
+    }),
   ]
   return {
-    // baseURL,
+    baseURL,
     handlers,
     serverOptions: {
       onUnhandledRequest: 'bypass',

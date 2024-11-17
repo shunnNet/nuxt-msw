@@ -4,7 +4,7 @@ import { setup, $fetch, createPage } from '@nuxt/test-utils/e2e'
 
 describe('layer', async () => {
   await setup({
-    // rootDir: fileURLToPath(new URL('./fixtures/layer', import.meta.url)),
+    rootDir: fileURLToPath(new URL('./fixtures/layer', import.meta.url)),
     port: 9999,
     browser: true,
   })

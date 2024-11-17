@@ -1,4 +1,19 @@
 
+## v1.0.2
+[compare changes](https://github.com/shunnNet/nuxt-msw/compare/v1.0.1...v1.0.2)
+
+### 🩹 Fixes
+- Lost type infos when `msw.enable: false`([e2bc95b](https://github.com/shunnNet/nuxt-msw/commit/e2bc95b))
+  - Related to: [issues/2](https://github.com/shunnNet/nuxt-msw/issues/2). 
+  - In previous versions, when `enable: false`, the auto imports provided by `nuxt-msw` would lose type information. This could hinder type checking and potentially cause unnecessary confusion for developers. Therefore, in this update, the auto imports will be retained even when `enable: false` to avoid these issues.
+
+### 🏡 Chore
+- Move `ofetch` and `unimport` to dev deps ([0eab2b8](https://github.com/shunnNet/nuxt-msw/commit/0eab2b8))
+
+### ❤️ Contributors
+
+- Net <wendell20904102@gmail.com>
+
 ## v1.0.1
 
 ## doc

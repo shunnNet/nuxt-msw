@@ -32,7 +32,8 @@ export type TNuxtMswWorkerOptions = {
 export type TNuxtMswServerOptions = {
   /**
    *  Indicate baseURL of Nuxt server. e.g: `http://localhost:3000`
-   *  Required if you use `useFetch` or `$fetch` with relative URL in your app.
+   *
+   * Required if you use `useFetch` or `$fetch` with relative URL in your app.
    */
   baseURL: string
   /**
@@ -70,6 +71,8 @@ export type TNuxtMswServerOptions = {
  *
  * @param options - The Nuxt MSW Worker options or a function that returns the options.
  * @returns A function return Nuxt MSW Worker options.
+ *
+ * @see https://github.com/shunnNet/nuxt-msw?tab=readme-ov-file#worker
  */
 export const defineNuxtMswWorkerOption = (
   options: TNuxtMswWorkerOptions | (() => TNuxtMswWorkerOptions),
@@ -83,6 +86,8 @@ export const defineNuxtMswWorkerOption = (
  *
  * @param options - The Nuxt MSW Server options or a function that returns the options.
  * @returns A function return Nuxt MSW Server options.
+ *
+ * @see https://github.com/shunnNet/nuxt-msw?tab=readme-ov-file#server
  */
 export const defineNuxtMswServerOption = (
   options: TNuxtMswServerOptions | (() => TNuxtMswServerOptions),
@@ -117,6 +122,8 @@ export type TNuxtMswTestOptions = {
  *
  * @param options - The Nuxt MSW Server options or a function that returns the options.
  * @returns A function return Nuxt MSW Server options.
+ *
+ * @see https://github.com/shunnNet/nuxt-msw?tab=readme-ov-file#nuxt-layer-and-unit-test
  */
 export const defineNuxtMswTestOptions = (
   options: TNuxtMswTestOptions | (() => TNuxtMswTestOptions),

@@ -1,18 +1,18 @@
 # nuxt-msw
-<!-- [![npm version][npm-version-src]][npm-version-href]
-[![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![License][license-src]][license-href]
-[![Nuxt][nuxt-src]][nuxt-href] -->
+[![npm version](https://img.shields.io/npm/v/@crazydos/nuxt-msw.svg?style=flat&colorA=18181B&colorB=28CF8D)](https://www.npmjs.com/package/@crazydos/nuxt-msw)
+[![npm downloads](https://img.shields.io/npm/dm/@crazydos/nuxt-msw.svg?style=flat&colorA=18181B&colorB=28CF8D)](https://www.npmjs.com/package/@crazydos/nuxt-msw)
+[![License](https://img.shields.io/github/license/nuxt/nuxt.svg?style=flat&colorA=18181B&colorB=28CF8D)](https://github.com/shunnNet/nuxt-msw/blob/main/LICENSE)
 
 `nuxt-msw` integrates [MSW (Mock Service Worker)](https://mswjs.io/) into a Nuxt project, allowing you to use it for API mocking during development. Most of the code can be directly shared with test mocks. 
 
 
-- [✨ &nbsp;Release Notes](/CHANGELOG.md)
+[✨ Release Notes](/CHANGELOG.md)
 <!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/nuxt-msw?file=playground%2Fapp.vue) -->
 <!-- - [📖 &nbsp;Documentation](https://example.com) -->
 
 - [nuxt-msw](#nuxt-msw)
   - [Features](#features)
+  - [Online Playground](#online-playground)
   - [Migrate: `0.x` -\> `1.x` users](#migrate-0x---1x-users)
   - [Setup](#setup)
   - [Usage](#usage)
@@ -37,6 +37,12 @@
 - 🚀 Use MSW powerful mocking features in Nuxt development
 - ⛰ Intercept both server-side and client-side request, including `$fetch`, `useFetch` and any other api requests.
 - 🥧 Support Nuxt layer.
+
+## Online Playground
+You can try out the functionality of `nuxt-msw` online through the following website.
+
+[![Play in Codesandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/devbox/3jdr8d?embed=1)
+<!-- [![Play in Stackblitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/edit/nuxt-starter-ex6po1?file=app.vue) -->
 
 ## Migrate: `0.x` -> `1.x` users
 Thank you to all the users of version 0.x. I believe you won’t need to put in too much effort to upgrade to version 1.x.
@@ -216,27 +222,38 @@ export default defineNuxtConfig({
   msw: {
     /**
      * Whether to enable the module. Default to `true`
+     * 
+     * This is useful when you need to enable or disable msw based on the environment.
+     * 
+     * When `enable: false`, the msw worker and server will not try to intercept requests, but keeps auto import composables for type checking.
+     * 
+     * @default true
+     * 
+     * @example
+     * {
+     *   enable: process.env.TEST === 'true'
+     * }
      */
-    enable: true,
+    enable: true, // default: true
      /**
       * Path to the nuxt-msw runtime folder that include worker and server files.
-      * default: `~/msw`
+      * @default "~/msw"
       */ 
     folderPath: "~/msw"
-    
     /**
      * Should include nuxt layers msw settings or not
-     * default: true
+     * @default true
      */
     includeLayer?: boolean
-    
     /**
      *
      * Enable unit test mode. default: false
      *
-     * In unit test mode, the module run <folderPath>/unit.{ts,js,mjs,cjs} file which run in nodejs environment.
+     * When this mode is enabled, you can use `setupNuxtMswServer` to start the msw server in a unit test environment (which is a Node.js environment).
      *
-     * Which means msw server will be used in this mode.
+     *  When enable: false, this mode is inactive.
+     * 
+     * @default true
      */
     testUtils?: boolean
   },
@@ -369,7 +386,8 @@ await setupNuxtMswServer({
 })
 ```
 
-> [!NOTE] `baseURL` here is just a valid domain, it is not necessary to match nuxt server address. But if you run a real server and want msw fallback to there, you need to set baseURL to the real server address.  
+> [!NOTE] 
+> `baseURL` here is just a valid domain, it is not necessary to match nuxt server address. But if you run a real server and want msw fallback to there, you need to set baseURL to the real server address.  
 
 
 #### E2E Tests

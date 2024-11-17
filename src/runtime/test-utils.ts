@@ -5,6 +5,13 @@ import defu from 'defu'
 import { _mswTestOptions } from '#imports'
 import type { TNuxtMswTestOptions } from '#imports'
 
+/**
+ * Used to start the MSW server in a unit test environment.
+ *
+ * You can pass in options to determine the mock configuration, and the settings passed to this function take the highest priority.
+ *
+ * Additionally, you can configure the mock settings in `<folderPath>/unit.{ts|js|mjs|cjs}`. Please refer to the documentation [nuxt layer and unit test](https://github.com/shunnNet/nuxt-msw?tab=readme-ov-file#nuxt-layer-and-unit-test).
+ */
 export const setupNuxtMswServer = async (options: TNuxtMswTestOptions = {}) => {
   const _mswOptions = defu(defu(options, _mswTestOptions()), {
     handlers: [],
@@ -54,6 +61,24 @@ export const setupNuxtMswServer = async (options: TNuxtMswTestOptions = {}) => {
   }
 
   // set patched fetch to $fetch
+  /**
+   *
+   * 1.
+   * The main difference between passing localFetch and `globalThis.fetch` is
+   *
+   * passing localFetch prevent warning if internal fetch from nuxt/test-utils is made during the test
+   *
+   * Currently, the internal fetch are made only when vitest env setup which is before setupNuxtMswServer
+   *
+   * So It is ok to pass globalThis.fetch here actually
+   *
+   * 2.
+   * after nuxt/test-utils vitest setup, globalThis.fetch is normal fetch without modification
+   *
+   * globalThis.$fetch hold a fetch which is modified fetch (with local fetch)
+   *
+   * Maybe passing localFetch here is intend to align with its behaviour
+   */
   globalThis.$fetch = createFetch({
     fetch: localFetch,
     Headers: globalThis.Headers,

@@ -5,10 +5,7 @@ export default defineVitestConfig({
   // any custom Vitest config you require
   test: {
     include: [
-      // 'test/**/*.test.ts',
-      // 'test/**/basic.test.ts',
-      'test/**/component.test.ts',
-
+      'test/**/*.test.ts',
     ],
     setupFiles: [
       // resolve(__dirname, 'test/setup.ts'),
@@ -20,7 +17,6 @@ export default defineVitestConfig({
       nuxt: {
         domEnvironment: 'happy-dom',
 
-        port: 3002,
         rootDir: resolve(__dirname, './test/fixtures/basic'), // for component test
         overrides: {
           msw: {

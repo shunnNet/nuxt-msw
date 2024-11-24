@@ -2,6 +2,7 @@
 [![npm version](https://img.shields.io/npm/v/@crazydos/nuxt-msw.svg?style=flat&colorA=18181B&colorB=28CF8D)](https://www.npmjs.com/package/@crazydos/nuxt-msw)
 [![npm downloads](https://img.shields.io/npm/dm/@crazydos/nuxt-msw.svg?style=flat&colorA=18181B&colorB=28CF8D)](https://www.npmjs.com/package/@crazydos/nuxt-msw)
 [![License](https://img.shields.io/github/license/nuxt/nuxt.svg?style=flat&colorA=18181B&colorB=28CF8D)](https://github.com/shunnNet/nuxt-msw/blob/main/LICENSE)
+[![Nuxt Logo](https://img.shields.io/badge/Nuxt-020420?logo=nuxt.js)](https://nuxt.com/)
 
 `nuxt-msw` integrates [MSW (Mock Service Worker)](https://mswjs.io/) into a Nuxt project, allowing you to use it for API mocking during development. Most of the code can be directly shared with test mocks. 
 
@@ -30,6 +31,9 @@
     - [nuxt layer and unit test](#nuxt-layer-and-unit-test)
   - [Contribution](#contribution)
 
+<a href="https://buymeacoffee.com/shunnnet" target="_blank" rel="noopener noreferrer">
+  <img width="150" src="https://cdn.buymeacoffee.com/buttons/v2/default-green.png" alt="Buy Me A Coffee" />
+</a>
 
 ## Features
 <!-- Highlight some of the features your module provide here -->
@@ -526,7 +530,12 @@ const mswServer = await setupNuxtMswServer(
   
   # Run ESLint
   pnpm lint
-  
+
+  # Run unit test
+  pnpm test
+
+  # Run e2e test
+  pnpm test:pl
   ```
 
 </details>
@@ -546,3 +555,4 @@ Learn more about [authoring nuxt module](https://nuxt.com/docs/guide/going-furth
 
 [nuxt-src]: https://img.shields.io/badge/Nuxt-020420?logo=nuxt.js
 [nuxt-href]: https://nuxt.com -->
+
